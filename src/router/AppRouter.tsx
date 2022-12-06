@@ -1,33 +1,28 @@
 import React, { useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import UserForm from "../components/Form";
-import User from "../components/User";
+import UserForm from "../pages/Form";
+import DashboardPage from "../pages/DashboardPage";
+import Layout from "../components/Layout";
 import { useAuth } from "../hooks/useAuth";
+import AddVacationPage from "../pages/AddVacationPage";
 
 const AppRouter = () => {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (loading) return;
-  //   if (!loading) {
-  //     if (user && !user.remember) {
-  //       navigate("/login", { replace: true });
-  //     } else if (user && user.remember) {
-  //       navigate("/user", { replace: true });
-  //     }
-  //   }
-  // }, []);
+  if (loading) return <div>loading</div>;
 
   return user ? (
     <Routes>
-      <Route path="/user" element={<User />} />
-      <Route path="/login" element={<UserForm />} />
-      <Route path="*" element={<User />} />
+      <Route path="/user" element={<Layout />}>
+        <Route index element={<DashboardPage />} />
+        <Route path="/user/vacation" element={<AddVacationPage />} />
+      </Route>
+      <Route path="/" element={<UserForm />} />
+      <Route path="*" element={<DashboardPage />} />
     </Routes>
   ) : (
     <Routes>
-      <Route path="/login" element={<UserForm />} />
+      <Route path="/" element={<UserForm />} />
       <Route path="*" element={<UserForm />} />
     </Routes>
   );

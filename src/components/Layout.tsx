@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { useTypedSelector } from "../redux/hooks/useTypedSelector";
+import { useCustomDispatch } from "../redux/hooks/customDispatch";
+import { handleBackButton, editTitle } from "../redux/slices/controlSlice";
 import { useNavigate } from "react-router-dom";
 
 import AppBar from "@mui/material/AppBar";
@@ -12,23 +17,16 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Logout from "@mui/icons-material/Logout";
-import { useAuth } from "../hooks/useAuth";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-function ResponsiveAppBar({ children }: any) {
+function ResponsiveAppBar() {
   const [openUserSettings, setOpenUserSettings] = useState(null);
   const { user, logout, loading } = useAuth();
+  const { isBackButton, title } = useTypedSelector(
+    (state) => state.controlSlice
+  );
+  const dispatch = useCustomDispatch();
   const navigate = useNavigate();
-
-  //   useEffect(() => {
-  //     if (loading) return;
-  //     if (user && !user.remember) {
-  //       navigate("/login", { replace: true });
-  //     } else if (user && user.remember) {
-  //       navigate("/user", { replace: true });
-  //     }
-
-  //     return () => localStorage.removeItem("user");
-  //   }, []);
 
   const handleOpenUserMenu = (event: any) => {
     setOpenUserSettings(event.currentTarget);
@@ -38,10 +36,26 @@ function ResponsiveAppBar({ children }: any) {
     setOpenUserSettings(null);
   };
 
+  const moveBackOnDashboard = (where: string) => {
+    dispatch(handleBackButton(false));
+    dispatch(editTitle("Dashboard"));
+    navigate(where, { replace: true });
+  };
+
   return (
     <>
       <AppBar position="static">
         <Toolbar disableGutters sx={{ p: "0px 10px" }}>
+          {isBackButton ? (
+            <Box>
+              <IconButton
+                onClick={() => moveBackOnDashboard("/user")}
+                sx={{ p: 0 }}
+              >
+                <ArrowBackIcon sx={{ color: "white" }} />
+              </IconButton>
+            </Box>
+          ) : null}
           <Typography
             variant="h6"
             noWrap
@@ -54,13 +68,13 @@ function ResponsiveAppBar({ children }: any) {
               textAlign: "center",
             }}
           >
-            Dashboard
+            {title}
           </Typography>
           <Box>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar
-                  //   alt={loading ? "?" : user.email[0].toUpperCase()}
+                  alt={!loading && user ? user.email[0].toUpperCase() : "-"}
                   src="-"
                 />
               </IconButton>
@@ -108,10 +122,15 @@ function ResponsiveAppBar({ children }: any) {
               }}
             >
               <MenuItem sx={{ cursor: "text" }}>
-                <Avatar /> {loading ? "..." : user.email}
+                <Avatar /> {!loading && user ? user.email : "..."}
               </MenuItem>
 
-              <MenuItem onClick={logout}>
+              <MenuItem
+                onClick={() => {
+                  moveBackOnDashboard("/");
+                  logout();
+                }}
+              >
                 <ListItemIcon>
                   <Logout fontSize="small" />
                 </ListItemIcon>
@@ -121,7 +140,7 @@ function ResponsiveAppBar({ children }: any) {
           </Box>
         </Toolbar>
       </AppBar>
-      {children}
+      <Outlet />
     </>
   );
 }

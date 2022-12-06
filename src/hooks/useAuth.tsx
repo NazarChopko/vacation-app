@@ -13,13 +13,19 @@ export const useAuth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(2);
-    const isUser = localStorage.getItem("user");
-    if (!isUser) return navigate("/login", { replace: true });
-    navigate("/user", { replace: true });
-    setUser(JSON.parse(isUser) as User);
+    const isUser: User = JSON.parse(localStorage.getItem("user") as string);
+
+    if (!isUser) {
+      setLoading(false);
+      return navigate("/", { replace: true });
+    }
+
+    if (isUser.remember) {
+      navigate("/user", { replace: true });
+    }
+    setUser(isUser as User);
     setLoading(false);
-  }, [setUser]);
+  }, []);
 
   const login = (user: User) => {
     localStorage.setItem("user", JSON.stringify(user));
@@ -33,7 +39,6 @@ export const useAuth = () => {
     localStorage.removeItem("user");
     setUser({} as User);
     setLoading(false);
-    navigate("/login", { replace: true });
   };
 
   return { user, login, logout, loading };
