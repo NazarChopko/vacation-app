@@ -1,5 +1,3 @@
-import React from "react";
-import ReactDOM from "react-dom";
 import { useFormik, FormikProps } from "formik";
 import * as yup from "yup";
 import Box from "@mui/material/Box";
@@ -8,13 +6,13 @@ import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Typography from "@mui/material/Typography";
-import { useAuth } from "../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { styledForm } from "./style";
 
-interface MyValues {
+interface IFormData {
   email: string;
   password: string;
-  remember: boolean | any;
+  remember: boolean;
 }
 
 const validationSchema = yup.object({
@@ -31,7 +29,7 @@ const validationSchema = yup.object({
 const UserForm = () => {
   const { login } = useAuth();
 
-  const formik: FormikProps<MyValues> = useFormik({
+  const formik: FormikProps<IFormData> = useFormik<IFormData>({
     initialValues: {
       email: "",
       password: "",
@@ -45,17 +43,7 @@ const UserForm = () => {
   });
 
   return (
-    <Box
-      sx={{
-        width: "500px",
-        height: "350px",
-        margin: "0 auto",
-        border: "2px solid black",
-        borderRadius: "6px",
-        padding: "20px",
-        marginTop: "200px",
-      }}
-    >
+    <Box sx={styledForm.formWrapper}>
       <Typography
         sx={{ textAlign: "center", paddingBottom: "30px" }}
         variant="h4"

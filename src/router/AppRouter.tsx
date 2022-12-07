@@ -1,24 +1,41 @@
-import React, { useEffect } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
-import UserForm from "../pages/Form";
-import DashboardPage from "../pages/DashboardPage";
-import Layout from "../components/Layout";
+import React, { useEffect, useState } from "react";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import { UserForm } from "../pages/Form";
+import { Dashboard } from "../pages/Dashboard";
+import { Layout } from "../shared/Layout";
 import { useAuth } from "../hooks/useAuth";
-import AddVacationPage from "../pages/AddVacationPage";
+import { AddVacation } from "../pages/AddVacation";
 
 const AppRouter = () => {
   const { user, loading } = useAuth();
+  const [isBackButton, setIsBackButton] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>("Dashboard");
 
   if (loading) return <div>loading</div>;
 
   return user ? (
     <Routes>
-      <Route path="/user" element={<Layout />}>
-        <Route index element={<DashboardPage />} />
-        <Route path="/user/vacation" element={<AddVacationPage />} />
+      <Route
+        path="/user"
+        element={
+          <Layout
+            title={title}
+            isBackButton={isBackButton}
+            setIsBackButton={setIsBackButton}
+            setTitle={setTitle}
+          />
+        }
+      >
+        <Route
+          index
+          element={
+            <Dashboard setIsBackButton={setIsBackButton} setTitle={setTitle} />
+          }
+        />
+        <Route path="/user/vacation" element={<AddVacation />} />
       </Route>
       <Route path="/" element={<UserForm />} />
-      <Route path="*" element={<DashboardPage />} />
+      <Route path="*" element={<Navigate to="user" />} />
     </Routes>
   ) : (
     <Routes>

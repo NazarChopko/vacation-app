@@ -13,7 +13,9 @@ export const useAuth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const isUser: User = JSON.parse(localStorage.getItem("user") as string);
+    const isUser: User | null = JSON.parse(
+      localStorage.getItem("user") as string
+    );
 
     if (!isUser) {
       setLoading(false);
@@ -23,7 +25,7 @@ export const useAuth = () => {
     if (isUser.remember) {
       navigate("/user", { replace: true });
     }
-    setUser(isUser as User);
+    setUser(isUser);
     setLoading(false);
   }, []);
 
@@ -41,5 +43,10 @@ export const useAuth = () => {
     setLoading(false);
   };
 
-  return { user, login, logout, loading };
+  return {
+    user,
+    login,
+    logout,
+    loading,
+  };
 };

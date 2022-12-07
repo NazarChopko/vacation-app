@@ -1,9 +1,6 @@
-import React, { useState } from "react";
+import React, { FC, useState, Dispatch, SetStateAction } from "react";
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import { useTypedSelector } from "../redux/hooks/useTypedSelector";
-import { useCustomDispatch } from "../redux/hooks/customDispatch";
-import { handleBackButton, editTitle } from "../redux/slices/controlSlice";
+import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 import AppBar from "@mui/material/AppBar";
@@ -18,28 +15,47 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Logout from "@mui/icons-material/Logout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { styledLayout } from "./style";
 
-function ResponsiveAppBar() {
-  const [openUserSettings, setOpenUserSettings] = useState(null);
-  const { user, logout, loading } = useAuth();
-  const { isBackButton, title } = useTypedSelector(
-    (state) => state.controlSlice
+export interface ILayoutProps {
+  title: string;
+  isBackButton: boolean;
+  setTitle: Dispatch<SetStateAction<string>>;
+  setIsBackButton: Dispatch<SetStateAction<boolean>>;
+}
+
+const Layout: FC<ILayoutProps> = ({
+  title,
+  isBackButton,
+  setIsBackButton,
+  setTitle,
+}) => {
+  const [openUserSettings, setOpenUserSettings] = useState<null | HTMLElement>(
+    null
   );
-  const dispatch = useCustomDispatch();
+  const { user, logout, loading } = useAuth();
   const navigate = useNavigate();
 
-  const handleOpenUserMenu = (event: any) => {
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>): void => {
     setOpenUserSettings(event.currentTarget);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (): void => {
     setOpenUserSettings(null);
   };
 
-  const moveBackOnDashboard = (where: string) => {
-    dispatch(handleBackButton(false));
-    dispatch(editTitle("Dashboard"));
+  const moveBackOnDashboard = (where: string): void => {
+    setIsBackButton(false);
+    setTitle("Dashboard");
     navigate(where, { replace: true });
+  };
+
+  const firstLetterForIcon = (): string => {
+    return !loading && user ? user.email[0].toUpperCase() : "-";
+  };
+
+  const isUserName = (): string => {
+    return !loading && user ? user.email : "...";
   };
 
   return (
@@ -56,27 +72,13 @@ function ResponsiveAppBar() {
               </IconButton>
             </Box>
           ) : null}
-          <Typography
-            variant="h6"
-            noWrap
-            sx={{
-              width: "100%",
-              mr: "auto",
-              fontWeight: 700,
-              color: "inherit",
-              textDecoration: "none",
-              textAlign: "center",
-            }}
-          >
+          <Typography variant="h6" noWrap sx={styledLayout.title}>
             {title}
           </Typography>
           <Box>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar
-                  alt={!loading && user ? user.email[0].toUpperCase() : "-"}
-                  src="-"
-                />
+                <Avatar alt={firstLetterForIcon()} src="-" />
               </IconButton>
             </Tooltip>
             <Menu
@@ -96,33 +98,11 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
               PaperProps={{
                 elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    width: 32,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  "&:before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
-                  },
-                },
+                sx: styledLayout.paper,
               }}
             >
               <MenuItem sx={{ cursor: "text" }}>
-                <Avatar /> {!loading && user ? user.email : "..."}
+                <Avatar /> {isUserName()}
               </MenuItem>
 
               <MenuItem
@@ -143,5 +123,5 @@ function ResponsiveAppBar() {
       <Outlet />
     </>
   );
-}
-export default ResponsiveAppBar;
+};
+export default Layout;

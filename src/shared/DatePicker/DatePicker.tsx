@@ -9,8 +9,8 @@ interface IVacationDatePickerProps {
   type: string;
   startDate?: Dayjs | null;
   endDate?: Dayjs | null;
-  setStartDate?: any;
-  setEndDate?: any;
+  setStartDate?: Dispatch<SetStateAction<Dayjs | null>>;
+  setEndDate?: Dispatch<SetStateAction<Dayjs | null>>;
 }
 
 const VacationDatePicker: FC<IVacationDatePickerProps> = ({
@@ -20,11 +20,13 @@ const VacationDatePicker: FC<IVacationDatePickerProps> = ({
   setEndDate,
   setStartDate,
 }) => {
-  const handleChangeDate = (date: any) => {
-    if (type === "Start") {
-      setStartDate(date);
-    } else {
-      setEndDate(date);
+  const handleChangeDate = (date: Dayjs | null) => {
+    if (date) {
+      if (type === "Start") {
+        setStartDate?.(date);
+      } else {
+        setEndDate?.(date);
+      }
     }
   };
 
@@ -33,7 +35,7 @@ const VacationDatePicker: FC<IVacationDatePickerProps> = ({
       <DatePicker
         label={`${type} date`}
         value={type === "Start" ? startDate : endDate}
-        onChange={(newDate) => handleChangeDate(newDate)}
+        onChange={(newDate: Dayjs | null) => handleChangeDate(newDate)}
         renderInput={(params) => <TextField {...params} />}
         onError={(reason, value) => {
           console.log(reason);

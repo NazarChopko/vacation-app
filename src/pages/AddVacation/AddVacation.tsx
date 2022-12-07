@@ -1,31 +1,15 @@
 import React, { useState } from "react";
-import ReactDOM from "react-dom";
-import { useFormik, FormikProps } from "formik";
 import { Dayjs } from "dayjs";
-import * as yup from "yup";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Typography from "@mui/material/Typography";
-import { useAuth } from "../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
-import VacationDatePicker from "../components/DatePicker";
-import VacationSelector from "../components/VacationSelector";
-
-// interface MyValues {
-//   type: string;
-//   start: string;
-//   end: boolean | any;
-// }
+import { VacationDatePicker } from "../../shared/DatePicker";
+import { VacationSelector } from "../../shared/VacationSelector";
+import { styledAddVacation } from "./style";
 
 const AddVacation = () => {
-  const [vacationType, setVacationType] = useState<string | null | undefined>(
-    ""
-  );
-  const [startDate, setStartDate] = useState<any>(null);
-  const [endDate, setEndDate] = useState<any>(null);
+  const [vacationType, setVacationType] = useState<string | null>("");
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [notes, setNotes] = useState<string | null>();
   const [error, setError] = useState<string>("");
 
@@ -38,28 +22,9 @@ const AddVacation = () => {
 
   return (
     <>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-around",
-          width: "900px",
-          height: "400px",
-          margin: "0 auto",
-          border: "2px solid black",
-          borderRadius: "6px",
-          padding: "20px",
-          marginTop: "100px",
-        }}
-      >
+      <Box sx={styledAddVacation.vacationWrapper}>
         <Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "40px",
-            }}
-          >
+          <Box sx={styledAddVacation.datePickBlock}>
             <VacationSelector
               vacationType={vacationType}
               setVacationType={setVacationType}
