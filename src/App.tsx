@@ -9,12 +9,12 @@ function App() {
   useEffect(() => {
     const isUser = JSON.parse(localStorage.getItem("user") as string);
     if (!isUser) {
-      return navigate("/", { replace: true });
+      return navigate("/login");
     }
     if (isUser.remember) {
-      navigate("/user", { replace: true });
+      navigate("/");
     } else {
-      navigate("/", { replace: true });
+      navigate("/login");
     }
   }, []);
   return <AppRouter />;

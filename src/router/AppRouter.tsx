@@ -6,10 +6,10 @@ import { AddVacation } from "../pages/AddVacation";
 const AppRouter = () => {
   return (
     <Routes>
-      <Route path="/user" element={<Dashboard />} />
-      <Route path="/user/vacation" element={<AddVacation />} />
-      <Route path="/" element={<UserForm />} />
-      <Route path="*" element={<Navigate to="/" />} />
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/vacation" element={<AddVacation />} />
+      <Route path="/login" element={<UserForm />} />
+      <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );
 };

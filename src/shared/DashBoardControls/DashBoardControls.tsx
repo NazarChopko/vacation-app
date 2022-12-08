@@ -11,7 +11,7 @@ const DashBoardControls: FC = () => {
   const navigate = useNavigate();
 
   const addNewVacation = (): void => {
-    navigate("/user/vacation", { replace: true });
+    navigate("/vacation");
   };
 
   return (

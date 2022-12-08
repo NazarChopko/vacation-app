@@ -28,7 +28,7 @@ export const useAuth = () => {
     localStorage.setItem("user", JSON.stringify(user));
     setUser(user);
     setLoading(false);
-    navigate("/user", { replace: true });
+    navigate("/");
   };
 
   const logout = () => {

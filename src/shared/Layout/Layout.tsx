@@ -18,9 +18,10 @@ import { styledLayout } from "./style";
 
 export interface ILayoutProps {
   title: string;
+  backButton?: () => void;
 }
 
-const Layout: FC<ILayoutProps> = ({ title }) => {
+const Layout: FC<ILayoutProps> = ({ title, backButton }) => {
   const [openUserSettings, setOpenUserSettings] = useState<null | HTMLElement>(
     null
   );
@@ -47,16 +48,14 @@ const Layout: FC<ILayoutProps> = ({ title }) => {
     <>
       <AppBar position="static">
         <Toolbar disableGutters sx={{ p: "0px 10px" }}>
-          {title !== "Dashboard" ? (
+          {backButton && (
             <Box>
-              <IconButton
-                onClick={() => navigate("/user", { replace: true })}
-                sx={{ p: 0 }}
-              >
+              <IconButton onClick={backButton} sx={{ p: 1 }}>
                 <ArrowBackIcon sx={{ color: "white" }} />
               </IconButton>
             </Box>
-          ) : null}
+          )}
+
           <Typography variant="h6" noWrap sx={styledLayout.title}>
             {title}
           </Typography>
@@ -93,7 +92,7 @@ const Layout: FC<ILayoutProps> = ({ title }) => {
               <MenuItem
                 onClick={() => {
                   logout();
-                  navigate("/", { replace: true });
+                  navigate("/login");
                 }}
               >
                 <ListItemIcon>

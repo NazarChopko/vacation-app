@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Dayjs } from "dayjs";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { VacationDatePicker } from "./DatePicker";
@@ -12,6 +13,7 @@ const AddVacation = () => {
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [notes, setNotes] = useState<string>("");
+  const navigate = useNavigate();
 
   const isFieldsEmpty = startDate && endDate && vacationType;
 
@@ -22,7 +24,7 @@ const AddVacation = () => {
 
   return (
     <>
-      <Layout title="Add" />
+      <Layout title="Add" backButton={() => navigate(-1)} />
       <Box sx={styledAddVacation.vacationWrapper}>
         <Box>
           <Box sx={styledAddVacation.datePickBlock}>

@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import { useAuth } from "../../hooks/useAuth";
 import { styledForm } from "./style";
 
-interface IFormData {
+interface IUserFormData {
   email: string;
   password: string;
   remember: boolean;
@@ -29,7 +29,7 @@ const validationSchema = yup.object({
 const UserForm = () => {
   const { login } = useAuth();
 
-  const formik: FormikProps<IFormData> = useFormik<IFormData>({
+  const formik: FormikProps<IUserFormData> = useFormik<IUserFormData>({
     initialValues: {
       email: "",
       password: "",
