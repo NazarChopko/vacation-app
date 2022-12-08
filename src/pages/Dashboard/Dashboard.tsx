@@ -1,21 +1,17 @@
 import Box from "@mui/material/Box";
 import { FC } from "react";
-import { DashboardHandlers } from "../../shared/DashboardHandlers";
-import { ILayoutProps } from "../../shared/Layout/Layout";
-import { Table } from "../../shared/Table";
+import { DashBoardControls } from "../../shared/DashBoardControls";
+import { Layout } from "../../shared/Layout";
+import { VacationTable } from "../../shared/Table";
 
-export type DashboardProps = Pick<ILayoutProps, "setTitle" | "setIsBackButton">;
-
-const DashboardPage: FC<DashboardProps> = ({ setTitle, setIsBackButton }) => {
+const DashBoard: FC = () => {
   return (
-    <Box sx={{ width: "90%", margin: "0 auto", marginTop: "50px" }}>
-      <DashboardHandlers
-        setIsBackButton={setIsBackButton}
-        setTitle={setTitle}
-      />
-      <Table />
+    <Box sx={{ width: "100%%", margin: "0 auto" }}>
+      <Layout title={"Dashboard"} />
+      <DashBoardControls />
+      <VacationTable />
     </Box>
   );
 };
 
-export default DashboardPage;
+export default DashBoard;

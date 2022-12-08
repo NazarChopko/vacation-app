@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { FC } from "react";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -116,7 +116,7 @@ const rows: any = [
   //   createData(6, "Gingerbreads", 356, 16.0, 49, 3.9),
 ];
 
-export default function CustomPaginationActionsTable() {
+const VacationTable: FC = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
 
@@ -206,4 +206,6 @@ export default function CustomPaginationActionsTable() {
       </TableContainer>
     </>
   );
-}
+};
+
+export default VacationTable;

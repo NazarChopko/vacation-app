@@ -3,7 +3,7 @@ export const styledDashboard = {
     display: "flex",
     justifyContent: "space-between",
     width: "100%",
-    paddingBottom: "60px",
+    padding: "60px 0px",
   },
   addContainer: {
     display: "flex",

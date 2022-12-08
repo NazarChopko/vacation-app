@@ -5,18 +5,12 @@ import Box from "@mui/material/Box";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
-import { DashboardProps } from "../../pages/Dashboard/Dashboard";
 import { styledDashboard } from "./style";
 
-const DashboardHandlers: FC<DashboardProps> = ({
-  setTitle,
-  setIsBackButton,
-}) => {
+const DashBoardControls: FC = () => {
   const navigate = useNavigate();
 
   const addNewVacation = (): void => {
-    setTitle("Add");
-    setIsBackButton(true);
     navigate("/user/vacation", { replace: true });
   };
 
@@ -46,4 +40,4 @@ const DashboardHandlers: FC<DashboardProps> = ({
   );
 };
 
-export default DashboardHandlers;
+export default DashBoardControls;

@@ -2,26 +2,27 @@ import React, { useState } from "react";
 import { Dayjs } from "dayjs";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { VacationDatePicker } from "../../shared/DatePicker";
-import { VacationSelector } from "../../shared/VacationSelector";
+import { VacationDatePicker } from "./DatePicker";
+import { VacationSelector } from "./VacationSelector";
+import { Layout } from "../../shared/Layout";
 import { styledAddVacation } from "./style";
 
 const AddVacation = () => {
-  const [vacationType, setVacationType] = useState<string | null>("");
+  const [vacationType, setVacationType] = useState<string>("");
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
-  const [notes, setNotes] = useState<string | null>();
-  const [error, setError] = useState<string>("");
+  const [notes, setNotes] = useState<string>("");
 
-  const isFildesEmpty = startDate && endDate && vacationType;
+  const isFieldsEmpty = startDate && endDate && vacationType;
 
   const addNewVacation = () => {
-    if (!isFildesEmpty) return console.log("Error");
+    if (!isFieldsEmpty) return console.log("Error");
     console.log({ vacationType, endDate, startDate });
   };
 
   return (
     <>
+      <Layout title="Add" />
       <Box sx={styledAddVacation.vacationWrapper}>
         <Box>
           <Box sx={styledAddVacation.datePickBlock}>
@@ -50,7 +51,6 @@ const AddVacation = () => {
             label="Multiline"
             multiline
             rows={8}
-            defaultValue="Default Value"
           />
         </Box>
       </Box>

@@ -1,8 +1,7 @@
-import React, { FC, useState, Dispatch, SetStateAction } from "react";
+import React, { FC, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -19,17 +18,9 @@ import { styledLayout } from "./style";
 
 export interface ILayoutProps {
   title: string;
-  isBackButton: boolean;
-  setTitle: Dispatch<SetStateAction<string>>;
-  setIsBackButton: Dispatch<SetStateAction<boolean>>;
 }
 
-const Layout: FC<ILayoutProps> = ({
-  title,
-  isBackButton,
-  setIsBackButton,
-  setTitle,
-}) => {
+const Layout: FC<ILayoutProps> = ({ title }) => {
   const [openUserSettings, setOpenUserSettings] = useState<null | HTMLElement>(
     null
   );
@@ -44,17 +35,11 @@ const Layout: FC<ILayoutProps> = ({
     setOpenUserSettings(null);
   };
 
-  const moveBackOnDashboard = (where: string): void => {
-    setIsBackButton(false);
-    setTitle("Dashboard");
-    navigate(where, { replace: true });
-  };
-
   const firstLetterForIcon = (): string => {
-    return !loading && user ? user.email[0].toUpperCase() : "-";
+    return !loading && user ? user.email.toUpperCase() : "-";
   };
 
-  const isUserName = (): string => {
+  const setUserName = (): string => {
     return !loading && user ? user.email : "...";
   };
 
@@ -62,10 +47,10 @@ const Layout: FC<ILayoutProps> = ({
     <>
       <AppBar position="static">
         <Toolbar disableGutters sx={{ p: "0px 10px" }}>
-          {isBackButton ? (
+          {title !== "Dashboard" ? (
             <Box>
               <IconButton
-                onClick={() => moveBackOnDashboard("/user")}
+                onClick={() => navigate("/user", { replace: true })}
                 sx={{ p: 0 }}
               >
                 <ArrowBackIcon sx={{ color: "white" }} />
@@ -102,13 +87,13 @@ const Layout: FC<ILayoutProps> = ({
               }}
             >
               <MenuItem sx={{ cursor: "text" }}>
-                <Avatar /> {isUserName()}
+                <Avatar /> {setUserName()}
               </MenuItem>
 
               <MenuItem
                 onClick={() => {
-                  moveBackOnDashboard("/");
                   logout();
+                  navigate("/", { replace: true });
                 }}
               >
                 <ListItemIcon>

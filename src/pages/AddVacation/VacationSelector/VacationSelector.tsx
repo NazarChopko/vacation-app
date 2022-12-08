@@ -6,8 +6,8 @@ import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 interface IVacationSelectorProps {
-  vacationType: any;
-  setVacationType: Dispatch<SetStateAction<any>>;
+  vacationType: string;
+  setVacationType: Dispatch<SetStateAction<string>>;
 }
 
 const VacationSelector: FC<IVacationSelectorProps> = ({

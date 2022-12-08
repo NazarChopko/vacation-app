@@ -8,28 +8,23 @@ export interface User {
 }
 
 export const useAuth = () => {
-  const [user, setUser] = useState<User>({} as User);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const isUser: User | null = JSON.parse(
+    setLoading(true);
+    const getUser: User | null = JSON.parse(
       localStorage.getItem("user") as string
     );
-
-    if (!isUser) {
-      setLoading(false);
-      return navigate("/", { replace: true });
+    if (getUser) {
+      setUser(getUser);
     }
-
-    if (isUser.remember) {
-      navigate("/user", { replace: true });
-    }
-    setUser(isUser);
     setLoading(false);
   }, []);
 
   const login = (user: User) => {
+    setLoading(true);
     localStorage.setItem("user", JSON.stringify(user));
     setUser(user);
     setLoading(false);
@@ -37,10 +32,8 @@ export const useAuth = () => {
   };
 
   const logout = () => {
-    setLoading(true);
     localStorage.removeItem("user");
-    setUser({} as User);
-    setLoading(false);
+    setUser(null);
   };
 
   return {
