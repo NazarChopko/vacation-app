@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useContext, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -15,6 +15,12 @@ import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
+import { IDataVacation, UserData } from "../../context/UserDataContext";
+import { useNavigate } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
+import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
+import dayjs from "dayjs";
+import { useAuth } from "../../hooks/useAuth";
 
 interface TablePaginationActionsProps {
   count: number;
@@ -96,32 +102,29 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   );
 }
 
-function createData(
-  id: number,
-  name: string,
-  calories: number,
-  fat: number,
-  notes: number,
-  action: number
-) {
-  return { id, name, calories, fat, notes, action };
-}
-
-const rows: any = [
-  //   createData(1, "Frozen yoghurt", 159, 6.0, 24, 4.0),
-  //   createData(2, "Ice cream sandwich", 237, 9.0, 37, 4.3),
-  //   createData(3, "Eclair", 262, 16.0, 24, 6.0),
-  //   createData(4, "Cupcake", 305, 3.7, 67, 4.3),
-  //   createData(5, "Gingerbread", 356, 16.0, 49, 3.9),
-  //   createData(6, "Gingerbreads", 356, 16.0, 49, 3.9),
-];
-
 const VacationTable: FC = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
+  const { data, setEdit, setData } = useContext(UserData);
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const getDataFromStorage = JSON.parse(
+      localStorage.getItem("data") as string
+    );
+    const user = JSON.parse(localStorage.getItem("user") as string);
+    if (user && getDataFromStorage) {
+      for (let key in getDataFromStorage) {
+        if (user.email === key) {
+          setData(getDataFromStorage[key]);
+        }
+      }
+    }
+  }, [user]);
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -137,6 +140,31 @@ const VacationTable: FC = () => {
     setPage(0);
   };
 
+  const handleEdit = (id: string): void => {
+    setEdit(id);
+    navigate("/vacation");
+  };
+
+  const deleteVacation = (id: string) => {
+    const getData = JSON.parse(localStorage.getItem("data") as string);
+    const newVacation: IDataVacation[] = data.filter(
+      (vacation) => vacation.id !== id
+    );
+
+    localStorage.setItem(
+      "data",
+      JSON.stringify({
+        ...getData,
+        [user?.email as string]: [...newVacation],
+      })
+    );
+    setData(newVacation);
+  };
+
+  const vacationNotesLengthRender = (notes: string): string => {
+    return notes.length < 50 ? notes : notes.slice(0, 50) + "...";
+  };
+
   return (
     <>
       <TableContainer component={Paper}>
@@ -149,32 +177,63 @@ const VacationTable: FC = () => {
               <TableCell sx={{ width: "150" }} align="center">
                 Type
               </TableCell>
-              <TableCell align="right">Start date</TableCell>
-              <TableCell align="right">End date</TableCell>
+              <TableCell align="center">Start date</TableCell>
+              <TableCell align="center">End date</TableCell>
               <TableCell sx={{ width: "500px" }} align="center">
                 Notes
               </TableCell>
               <TableCell align="center">Action</TableCell>
             </TableRow>
           </TableHead>
-          {rows.length < 1 ? null : (
+          {data.length < 1 ? null : (
             <TableBody>
               {(rowsPerPage > 0
-                ? rows.slice(
+                ? data.slice(
                     page * rowsPerPage,
                     page * rowsPerPage + rowsPerPage
                   )
-                : rows
-              ).map((row: any) => (
-                <TableRow key={row.name}>
+                : data
+              ).map((vacationInfo: IDataVacation) => (
+                <TableRow key={vacationInfo.id}>
                   <TableCell component="th" scope="row">
-                    {row.id}
+                    {vacationInfo.id.slice(0, 4)}
                   </TableCell>
-                  <TableCell align="left">{row.name}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right">{row.notes}</TableCell>
-                  <TableCell align="center">{row.calories}</TableCell>
-                  <TableCell align="center">{row.action}</TableCell>
+                  <TableCell align="center">{vacationInfo.type}</TableCell>
+                  <TableCell align="center">
+                    {typeof vacationInfo.startDate === "string"
+                      ? dayjs(vacationInfo.startDate).format("DD-MM-YYYY")
+                      : vacationInfo.startDate?.format("DD-MM-YYYY")}
+                  </TableCell>
+                  <TableCell align="center">
+                    {typeof vacationInfo.endDate === "string"
+                      ? dayjs(vacationInfo.endDate).format("DD-MM-YYYY")
+                      : vacationInfo.endDate?.format("DD-MM-YYYY")}
+                  </TableCell>
+                  <TableCell align="center">
+                    {vacationNotesLengthRender(vacationInfo.notes)}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        paddingRight: "20px",
+                      }}
+                    >
+                      <IconButton
+                        onClick={() => handleEdit(vacationInfo.id)}
+                        sx={{ p: 1 }}
+                      >
+                        <FormatAlignJustifyIcon color="primary" />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => deleteVacation(vacationInfo.id)}
+                        sx={{ p: 1 }}
+                      >
+                        <DeleteIcon sx={{ color: "grey" }} />
+                      </IconButton>
+                    </Box>
+                  </TableCell>
                 </TableRow>
               ))}
               {emptyRows > 0 && (
@@ -184,25 +243,29 @@ const VacationTable: FC = () => {
               )}
             </TableBody>
           )}
+          <TableFooter>
+            <TableRow>
+              {data.length < 6 ? null : (
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+                  colSpan={3}
+                  count={data.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  SelectProps={{
+                    inputProps: {
+                      "aria-label": "rows per page",
+                    },
+                    native: true,
+                  }}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              )}
+            </TableRow>
+          </TableFooter>
         </Table>
-        {rows.length < 1 ? null : (
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-            colSpan={3}
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            SelectProps={{
-              inputProps: {
-                "aria-label": "rows per page",
-              },
-              native: true,
-            }}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            ActionsComponent={TablePaginationActions}
-          />
-        )}
       </TableContainer>
     </>
   );
