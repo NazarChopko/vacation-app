@@ -27,7 +27,7 @@ const Layout: FC<ILayoutProps> = ({ title, backButton }) => {
     null
   );
   const { user, logout, loading } = useAuth();
-  const { setData } = useContext(UserData);
+  const { setData, setFilterType } = useContext(UserData);
   const navigate = useNavigate();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>): void => {
@@ -94,6 +94,7 @@ const Layout: FC<ILayoutProps> = ({ title, backButton }) => {
               <MenuItem
                 onClick={() => {
                   logout();
+                  setFilterType("");
                   setData([]);
                   navigate("/login");
                 }}

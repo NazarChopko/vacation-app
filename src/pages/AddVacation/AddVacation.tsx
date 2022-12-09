@@ -18,12 +18,12 @@ const AddVacation = () => {
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [notes, setNotes] = useState<string>("");
   const navigate = useNavigate();
-  const { data, setData } = useContext(UserData);
+  const { data, setData, setFilterType } = useContext(UserData);
   const { user } = useAuth();
   const { vacationId } = useParams();
 
   const isFieldsEmpty = startDate && endDate && vacationType;
-  const setHeaderTitle: string = !vacationId ? "Add vacation" : "Edit vacation";
+  const setHeaderTitle: string = vacationId ? "Edit vacation" : "Add vacation";
 
   useEffect(() => {
     if (vacationId) {
@@ -70,6 +70,7 @@ const AddVacation = () => {
         })
       );
     }
+    setFilterType("");
     setData(newEditVacation);
   };
 
@@ -81,6 +82,7 @@ const AddVacation = () => {
           "data",
           JSON.stringify({ [user?.email as string]: [newVacation] })
         );
+        setFilterType("");
         setData((prev) => [newVacation, ...prev]);
         return navigate("/");
       }
@@ -105,6 +107,7 @@ const AddVacation = () => {
           })
         );
       }
+      setFilterType("");
       setData((prev) => [newVacation, ...prev]);
       navigate("/");
     } else {

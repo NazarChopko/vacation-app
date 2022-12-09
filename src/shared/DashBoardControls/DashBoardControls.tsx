@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
@@ -6,9 +6,11 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import { styledDashboard } from "./style";
+import { UserData } from "../../context/UserDataContext";
 
 const DashBoardControls: FC = () => {
   const navigate = useNavigate();
+  const { setFilterType } = useContext(UserData);
 
   const addNewVacation = (): void => {
     navigate("/vacation");
@@ -22,8 +24,8 @@ const DashBoardControls: FC = () => {
           variant="contained"
           aria-label="Disabled elevation buttons"
         >
-          <Button>Actual</Button>
-          <Button>History</Button>
+          <Button onClick={() => setFilterType("actual")}>Actual</Button>
+          <Button onClick={() => setFilterType("history")}>History</Button>
         </ButtonGroup>
         <Button
           onClick={addNewVacation}
