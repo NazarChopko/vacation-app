@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useContext } from "react";
 import { Outlet } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +15,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Logout from "@mui/icons-material/Logout";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { styledLayout } from "./style";
+import { UserData } from "../../context/UserDataContext";
 
 export interface ILayoutProps {
   title: string;
@@ -26,6 +27,7 @@ const Layout: FC<ILayoutProps> = ({ title, backButton }) => {
     null
   );
   const { user, logout, loading } = useAuth();
+  const { setData } = useContext(UserData);
   const navigate = useNavigate();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>): void => {
@@ -92,6 +94,7 @@ const Layout: FC<ILayoutProps> = ({ title, backButton }) => {
               <MenuItem
                 onClick={() => {
                   logout();
+                  setData([]);
                   navigate("/login");
                 }}
               >

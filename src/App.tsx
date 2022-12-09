@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import AppRouter from "./router/AppRouter";
+import UserDataContext, { UserData } from "./context/UserDataContext";
 
 function App() {
   const navigate = useNavigate();
+  const { setData } = useContext(UserData);
 
   useEffect(() => {
     const isUser = JSON.parse(localStorage.getItem("user") as string);
@@ -14,10 +16,15 @@ function App() {
     if (isUser.remember) {
       navigate("/");
     } else {
+      // setData([]);
       navigate("/login");
     }
   }, []);
-  return <AppRouter />;
+  return (
+    <UserDataContext>
+      <AppRouter />;
+    </UserDataContext>
+  );
 }
 
 export default App;
