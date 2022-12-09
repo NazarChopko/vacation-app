@@ -21,20 +21,15 @@ export interface IDataVacation {
 interface IContext {
   data: IDataVacation[] | [];
   setData: Dispatch<SetStateAction<IDataVacation[]>>;
-  edit: string;
-  setEdit: Dispatch<SetStateAction<string>>;
 }
 
 export const UserData = createContext<IContext>({} as IContext);
 
 const UserDataContext: FC<PropsWithChildren> = ({ children }) => {
-  const [data, setData] = useState<IDataVacation[] | []>([]);
-  const [edit, setEdit] = useState<string>("");
+  const [data, setData] = useState<IDataVacation[]>([]);
 
   return (
-    <UserData.Provider value={{ data, setData, edit, setEdit }}>
-      {children}
-    </UserData.Provider>
+    <UserData.Provider value={{ data, setData }}>{children}</UserData.Provider>
   );
 };
 

@@ -21,6 +21,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
 import dayjs from "dayjs";
 import { useAuth } from "../../hooks/useAuth";
+import { Typography } from "@mui/material";
 
 interface TablePaginationActionsProps {
   count: number;
@@ -102,22 +103,24 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   );
 }
 
+const getDataFromStorage = (key: string) => {
+  return JSON.parse(localStorage.getItem(key) as string);
+};
+
 const VacationTable: FC = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
-  const { data, setEdit, setData } = useContext(UserData);
+  const { data, setData } = useContext(UserData);
   const navigate = useNavigate();
   const { user } = useAuth();
 
   useEffect(() => {
-    const getDataFromStorage = JSON.parse(
-      localStorage.getItem("data") as string
-    );
-    const user = JSON.parse(localStorage.getItem("user") as string);
-    if (user && getDataFromStorage) {
-      for (let key in getDataFromStorage) {
+    const getVacationDataFromStorage = getDataFromStorage("data");
+    const user = getDataFromStorage("user");
+    if (user && getVacationDataFromStorage) {
+      for (let key in getVacationDataFromStorage) {
         if (user.email === key) {
-          setData(getDataFromStorage[key]);
+          setData(getVacationDataFromStorage[key]);
         }
       }
     }
@@ -140,29 +143,80 @@ const VacationTable: FC = () => {
     setPage(0);
   };
 
-  const handleEdit = (id: string): void => {
-    setEdit(id);
-    navigate("/vacation");
-  };
-
   const deleteVacation = (id: string) => {
-    const getData = JSON.parse(localStorage.getItem("data") as string);
+    const getData = getDataFromStorage("data");
     const newVacation: IDataVacation[] = data.filter(
       (vacation) => vacation.id !== id
     );
 
-    localStorage.setItem(
-      "data",
-      JSON.stringify({
-        ...getData,
-        [user?.email as string]: [...newVacation],
-      })
-    );
+    if (user) {
+      localStorage.setItem(
+        "data",
+        JSON.stringify({
+          ...getData,
+          [user.email as string]: [...newVacation],
+        })
+      );
+    }
     setData(newVacation);
   };
 
   const vacationNotesLengthRender = (notes: string): string => {
     return notes.length < 50 ? notes : notes.slice(0, 50) + "...";
+  };
+
+  const renderTableBody = () => {
+    return (
+      <TableBody>
+        {(rowsPerPage > 0
+          ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+          : data
+        ).map((vacationInfo: IDataVacation) => (
+          <TableRow key={vacationInfo.id}>
+            <TableCell component="th" scope="row">
+              {vacationInfo.id.slice(0, 4)}
+            </TableCell>
+            <TableCell align="center">{vacationInfo.type}</TableCell>
+            <TableCell align="center">
+              {dayjs(vacationInfo.startDate).format("DD-MM-YYYY")}
+            </TableCell>
+            <TableCell align="center">
+              {dayjs(vacationInfo.endDate).format("DD-MM-YYYY")}
+            </TableCell>
+            <TableCell align="center">
+              {vacationNotesLengthRender(vacationInfo.notes)}
+            </TableCell>
+            <TableCell align="center">
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  paddingRight: "20px",
+                }}
+              >
+                <IconButton
+                  onClick={() => navigate(`/vacation/${vacationInfo.id}`)}
+                  sx={{ p: 1 }}
+                >
+                  <FormatAlignJustifyIcon color="primary" />
+                </IconButton>
+                <IconButton
+                  onClick={() => deleteVacation(vacationInfo.id)}
+                  sx={{ p: 1 }}
+                >
+                  <DeleteIcon sx={{ color: "grey" }} />
+                </IconButton>
+              </Box>
+            </TableCell>
+          </TableRow>
+        ))}
+        {emptyRows > 0 && (
+          <TableRow style={{ height: 53 * emptyRows }}>
+            <TableCell colSpan={6} />
+          </TableRow>
+        )}
+      </TableBody>
+    );
   };
 
   return (
@@ -185,63 +239,19 @@ const VacationTable: FC = () => {
               <TableCell align="center">Action</TableCell>
             </TableRow>
           </TableHead>
-          {data.length < 1 ? null : (
+          {data.length === 0 ? (
             <TableBody>
-              {(rowsPerPage > 0
-                ? data.slice(
-                    page * rowsPerPage,
-                    page * rowsPerPage + rowsPerPage
-                  )
-                : data
-              ).map((vacationInfo: IDataVacation) => (
-                <TableRow key={vacationInfo.id}>
-                  <TableCell component="th" scope="row">
-                    {vacationInfo.id.slice(0, 4)}
-                  </TableCell>
-                  <TableCell align="center">{vacationInfo.type}</TableCell>
-                  <TableCell align="center">
-                    {typeof vacationInfo.startDate === "string"
-                      ? dayjs(vacationInfo.startDate).format("DD-MM-YYYY")
-                      : vacationInfo.startDate?.format("DD-MM-YYYY")}
-                  </TableCell>
-                  <TableCell align="center">
-                    {typeof vacationInfo.endDate === "string"
-                      ? dayjs(vacationInfo.endDate).format("DD-MM-YYYY")
-                      : vacationInfo.endDate?.format("DD-MM-YYYY")}
-                  </TableCell>
-                  <TableCell align="center">
-                    {vacationNotesLengthRender(vacationInfo.notes)}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        paddingRight: "20px",
-                      }}
-                    >
-                      <IconButton
-                        onClick={() => handleEdit(vacationInfo.id)}
-                        sx={{ p: 1 }}
-                      >
-                        <FormatAlignJustifyIcon color="primary" />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => deleteVacation(vacationInfo.id)}
-                        sx={{ p: 1 }}
-                      >
-                        <DeleteIcon sx={{ color: "grey" }} />
-                      </IconButton>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
+              <TableRow>
+                <TableCell />
+                <TableCell />
+                <TableCell />
+                <TableCell sx={{ fontSize: "20px" }} align="right">
+                  Table is empty!
+                </TableCell>
+              </TableRow>
             </TableBody>
+          ) : (
+            renderTableBody()
           )}
           <TableFooter>
             <TableRow>

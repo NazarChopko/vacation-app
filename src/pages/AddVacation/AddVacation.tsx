@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { Dayjs } from "dayjs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -18,21 +18,22 @@ const AddVacation = () => {
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [notes, setNotes] = useState<string>("");
   const navigate = useNavigate();
-  const { data, setData, edit, setEdit } = useContext(UserData);
+  const { data, setData } = useContext(UserData);
   const { user } = useAuth();
+  const { vacationId } = useParams();
 
   const isFieldsEmpty = startDate && endDate && vacationType;
-  const setHeaderTitle: string = !edit ? "Add vacation" : "Edit vacation";
+  const setHeaderTitle: string = !vacationId ? "Add vacation" : "Edit vacation";
 
   useEffect(() => {
-    if (edit) {
-      const editVacation = data.find((vacation) => vacation.id === edit);
+    if (vacationId) {
+      const editVacation = data.find((vacation) => vacation.id === vacationId);
       setVacationType(editVacation?.type as string);
       setNotes(editVacation?.notes as string);
       setStartDate(editVacation?.startDate as Dayjs);
       setEndDate(editVacation?.endDate as Dayjs);
     }
-  }, [edit]);
+  }, [vacationId]);
 
   const newVacation = {
     id: uuidv4(),
@@ -41,40 +42,40 @@ const AddVacation = () => {
     endDate,
     notes,
   };
-  const updateVacation = (
-    type: string,
-    id: string,
-    note: string,
-    firstDate: Dayjs | null,
-    secondDate: Dayjs | null
-  ) => {
+  const updateVacation = ({
+    type,
+    id,
+    notes,
+    startDate,
+    endDate,
+  }: IDataVacation) => {
     const getData = JSON.parse(localStorage.getItem("data") as string);
     const newEditVacation: IDataVacation[] = data.map((vacation) =>
       vacation.id === id
         ? {
             type,
-            notes: note,
-            id: edit,
-            startDate: firstDate,
-            endDate: secondDate,
+            notes,
+            id: vacationId as string,
+            startDate,
+            endDate,
           }
         : vacation
     );
-    localStorage.setItem(
-      "data",
-      JSON.stringify({
-        ...getData,
-        [user?.email as string]: [...newEditVacation],
-      })
-    );
+    if (user) {
+      localStorage.setItem(
+        "data",
+        JSON.stringify({
+          ...getData,
+          [user.email]: [...newEditVacation],
+        })
+      );
+    }
     setData(newEditVacation);
-    setEdit("");
   };
 
   const setNewVacation = () => {
-    if (!edit) {
+    if (!vacationId) {
       const getData = JSON.parse(localStorage.getItem("data") as string);
-
       if (!getData) {
         localStorage.setItem(
           "data",
@@ -107,7 +108,13 @@ const AddVacation = () => {
       setData((prev) => [newVacation, ...prev]);
       navigate("/");
     } else {
-      updateVacation(vacationType, edit, notes, startDate, endDate);
+      updateVacation({
+        type: vacationType,
+        id: vacationId,
+        notes,
+        startDate,
+        endDate,
+      });
       navigate("/");
     }
   };
@@ -117,7 +124,6 @@ const AddVacation = () => {
       <Layout
         title={setHeaderTitle}
         backButton={() => {
-          setEdit("");
           navigate(-1);
         }}
       />
