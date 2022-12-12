@@ -23,7 +23,9 @@ const AddVacation = () => {
   const { vacationId } = useParams();
 
   const isFieldsEmpty = startDate && endDate && vacationType;
-  const setHeaderTitle: string = vacationId ? "Edit vacation" : "Add vacation";
+  const setHeaderTitle: string = vacationId
+    ? `Edit vacation #${vacationId.slice(0, 4)}`
+    : "Add vacation";
 
   useEffect(() => {
     if (vacationId) {
@@ -136,7 +138,7 @@ const AddVacation = () => {
           disabled={Boolean(!isFieldsEmpty)}
           variant="contained"
         >
-          {setHeaderTitle}
+          {vacationId ? "Edit vacation" : "Add vacation"}
         </Button>
       </Box>
       <Box sx={styledAddVacation.vacationWrapper}>

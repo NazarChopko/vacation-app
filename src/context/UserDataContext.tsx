@@ -23,6 +23,8 @@ interface IContext {
   setData: Dispatch<SetStateAction<IDataVacation[]>>;
   filterType: string;
   setFilterType: Dispatch<SetStateAction<string>>;
+  renderCalendar: boolean;
+  setRenderCalendar: Dispatch<SetStateAction<boolean>>;
 }
 
 export const UserData = createContext<IContext>({} as IContext);
@@ -30,9 +32,19 @@ export const UserData = createContext<IContext>({} as IContext);
 const UserDataContext: FC<PropsWithChildren> = ({ children }) => {
   const [data, setData] = useState<IDataVacation[]>([]);
   const [filterType, setFilterType] = useState<string>("");
+  const [renderCalendar, setRenderCalendar] = useState(false);
 
   return (
-    <UserData.Provider value={{ data, setData, filterType, setFilterType }}>
+    <UserData.Provider
+      value={{
+        data,
+        setData,
+        filterType,
+        setFilterType,
+        renderCalendar,
+        setRenderCalendar,
+      }}
+    >
       {children}
     </UserData.Provider>
   );
