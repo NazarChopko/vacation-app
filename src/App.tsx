@@ -16,7 +16,6 @@ function App() {
     if (isUser.remember) {
       navigate("/");
     } else {
-      // setData([]);
       navigate("/login");
     }
   }, []);

@@ -110,7 +110,8 @@ const getDataFromStorage = (key: string) => {
 const VacationTable: FC = () => {
   const [page, setPage] = React.useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = React.useState<number>(5);
-  const { data, setData } = useContext(UserData);
+  const [filtered, setFiltered] = React.useState<IDataVacation[]>([]);
+  const { data, setData, filterType, setFilterType } = useContext(UserData);
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -125,6 +126,24 @@ const VacationTable: FC = () => {
       }
     }
   }, [user]);
+
+  useEffect(() => {
+    if (filterType) {
+      const today = dayjs().unix();
+      if (filterType === "actual") {
+        const actualVacation = data.filter(
+          (vacation) => dayjs(vacation.endDate).unix() >= today
+        );
+        setFiltered(actualVacation);
+      }
+      if (filterType === "history") {
+        const historyVacation = data.filter(
+          (vacation) => dayjs(vacation.endDate).unix() < today
+        );
+        setFiltered(historyVacation);
+      }
+    }
+  }, [filterType]);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
@@ -158,6 +177,7 @@ const VacationTable: FC = () => {
         })
       );
     }
+    setFilterType("");
     setData(newVacation);
   };
 
@@ -165,12 +185,12 @@ const VacationTable: FC = () => {
     return notes.length < 50 ? notes : notes.slice(0, 50) + "...";
   };
 
-  const renderTableBody = () => {
+  const renderTableBody = (info: IDataVacation[]) => {
     return (
       <TableBody>
         {(rowsPerPage > 0
-          ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-          : data
+          ? info.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+          : info
         ).map((vacationInfo: IDataVacation) => (
           <TableRow key={vacationInfo.id}>
             <TableCell component="th" scope="row">
@@ -219,7 +239,66 @@ const VacationTable: FC = () => {
     );
   };
 
-  return (
+  return filterType && filtered ? (
+    <>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 900 }} aria-label="custom pagination table">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ width: "100px" }} align="left">
+                Absect id
+              </TableCell>
+              <TableCell sx={{ width: "150" }} align="center">
+                Type
+              </TableCell>
+              <TableCell align="center">Start date</TableCell>
+              <TableCell align="center">End date</TableCell>
+              <TableCell sx={{ width: "500px" }} align="center">
+                Notes
+              </TableCell>
+              <TableCell align="center">Action</TableCell>
+            </TableRow>
+          </TableHead>
+          {filtered.length === 0 ? (
+            <TableBody>
+              <TableRow>
+                <TableCell />
+                <TableCell />
+                <TableCell />
+                <TableCell sx={{ fontSize: "20px" }} align="right">
+                  Table is empty!
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          ) : (
+            renderTableBody(filtered)
+          )}
+          <TableFooter>
+            <TableRow>
+              {filtered.length < 6 ? null : (
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+                  colSpan={3}
+                  count={filtered.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  SelectProps={{
+                    inputProps: {
+                      "aria-label": "rows per page",
+                    },
+                    native: true,
+                  }}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              )}
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
+    </>
+  ) : (
     <>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 900 }} aria-label="custom pagination table">
@@ -251,7 +330,7 @@ const VacationTable: FC = () => {
               </TableRow>
             </TableBody>
           ) : (
-            renderTableBody()
+            renderTableBody(data)
           )}
           <TableFooter>
             <TableRow>
