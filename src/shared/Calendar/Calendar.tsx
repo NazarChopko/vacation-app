@@ -1,6 +1,21 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+  useCallback,
+} from "react";
 import { useNavigate } from "react-router-dom";
-import { styled } from "@mui/system";
+import {
+  Frame,
+  Day,
+  WeekDays,
+  ColorPoint,
+  Header,
+  HeaderBox,
+  Body,
+} from "./style";
+import { DAYS, DAYS_LEAP, DAYS_OF_THE_WEEK, MONTHS } from "./data";
 import { green, red, orange } from "@mui/material/colors";
 import { UserData } from "../../context/UserDataContext";
 import { IconButton, Box } from "@mui/material";
@@ -8,86 +23,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import dayjs, { Dayjs } from "dayjs";
 
-const Frame = styled("div")({
-  width: "900px",
-  border: "1px solid lightgrey",
-  boxShadow: "2px 2px 2px #eee",
-  margin: "0 auto",
-});
-
-const Header = styled("div")(({ theme }) => ({
-  fontSize: "17px",
-  fontWeight: "bold",
-  padding: "10px 10px 5px 10px",
-  display: "flex",
-  justifyContent: "space-around",
-  alignItems: "center",
-  backgroundColor: theme.palette.primary.main,
-  color: "white",
-}));
-
-const Body = styled("div")({
-  width: "100%",
-  padding: "20px",
-  display: "flex",
-  flexWrap: "wrap",
-});
-
-const WeekDays = styled("div")(({ theme }) => ({
-  width: "14%",
-  height: "40px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  cursor: "pointer",
-  margin: "1px",
-  color: theme.palette.primary.main,
-}));
-const Day = styled("button")(({ theme }) => ({
-  width: "14%",
-  height: "40px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  cursor: "pointer",
-  margin: "1px",
-  color: theme.palette.primary.main,
-}));
-
-const HeaderBox = styled("div")(({ theme }) => ({
-  width: "900px",
-  margin: "0 auto",
-  height: "40px",
-  display: "flex",
-  alignItems: "center",
-}));
-
-const ColorPoint = styled("div")(({ theme }) => ({
-  width: "12px",
-  height: "12px",
-  borderRadius: "50px",
-  margin: "0px 7px 0px 30px",
-}));
-
 const Calendar = () => {
-  const DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  const DAYS_LEAP = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  const DAYS_OF_THE_WEEK = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
-  const MONTHS = [
-    "JAN",
-    "FEB",
-    "MAR",
-    "APR",
-    "MAY",
-    "JUN",
-    "JUL",
-    "AUG",
-    "SEP",
-    "OCT",
-    "NOV",
-    "DEC",
-  ];
-
   const today = dayjs();
   const [date, setDate] = useState(today);
   const [day, setDay] = useState(date.get("date"));
@@ -108,11 +44,11 @@ const Calendar = () => {
     return dayjs(new Date(date.get("year"), date.get("month"), 1)).get("day");
   }
 
-  const isLeapYear = (year: number) => {
+  const memoIsLeapYear = useMemo(() => {
     return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-  };
+  }, [year]);
 
-  const activeVacation = (dayInfo: Date): any => {
+  const activeVacation = (dayInfo: Date): object => {
     const equal = {
       backgroundColor: "",
       color: "",
@@ -160,7 +96,7 @@ const Calendar = () => {
     }
   };
 
-  const days = isLeapYear(date.get("year")) ? DAYS_LEAP : DAYS;
+  const daysOfSimpleOrLeapYear = memoIsLeapYear ? DAYS_LEAP : DAYS;
 
   return (
     <>
@@ -201,7 +137,9 @@ const Calendar = () => {
               <strong>{d}</strong>
             </WeekDays>
           ))}
-          {Array(days[month] + (startDay === 0 ? 6 : startDay - 1))
+          {Array(
+            daysOfSimpleOrLeapYear[month] + (startDay === 0 ? 6 : startDay - 1)
+          )
             .fill(null)
             .map((_, index) => {
               const d = index - (startDay === 0 ? startDay + 5 : startDay - 2);
@@ -209,7 +147,9 @@ const Calendar = () => {
               return (
                 <Day
                   sx={{
-                    backgroundColor: activeVacation(new Date(year, month, d)),
+                    ...(d > 0
+                      ? activeVacation(new Date(year, month, d))
+                      : null),
                     visibility: d - 1 < 0 ? "hidden" : "visible",
                   }}
                   key={index}

@@ -7,14 +7,14 @@ import { Layout } from "../../shared/Layout";
 import { VacationTable } from "../../shared/VacationTable";
 
 const DashBoard: FC = () => {
-  const { renderCalendar } = useContext(UserData);
+  const { isCalendarVisible } = useContext(UserData);
 
   return (
     <Box sx={{ width: "100%%", margin: "0 auto" }}>
       <Layout title={"Dashboard"} />
       <Box sx={{ padding: "0px 40px" }}>
         <DashBoardControls />
-        {renderCalendar ? <Calendar /> : <VacationTable />}
+        {isCalendarVisible ? <Calendar /> : <VacationTable />}
       </Box>
     </Box>
   );

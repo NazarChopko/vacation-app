@@ -23,8 +23,8 @@ interface IContext {
   setData: Dispatch<SetStateAction<IDataVacation[]>>;
   filterType: string;
   setFilterType: Dispatch<SetStateAction<string>>;
-  renderCalendar: boolean;
-  setRenderCalendar: Dispatch<SetStateAction<boolean>>;
+  isCalendarVisible: boolean;
+  setIsCalendarVisible: Dispatch<SetStateAction<boolean>>;
 }
 
 export const UserData = createContext<IContext>({} as IContext);
@@ -32,7 +32,7 @@ export const UserData = createContext<IContext>({} as IContext);
 const UserDataContext: FC<PropsWithChildren> = ({ children }) => {
   const [data, setData] = useState<IDataVacation[]>([]);
   const [filterType, setFilterType] = useState<string>("");
-  const [renderCalendar, setRenderCalendar] = useState(false);
+  const [isCalendarVisible, setIsCalendarVisible] = useState(false);
 
   return (
     <UserData.Provider
@@ -41,8 +41,8 @@ const UserDataContext: FC<PropsWithChildren> = ({ children }) => {
         setData,
         filterType,
         setFilterType,
-        renderCalendar,
-        setRenderCalendar,
+        isCalendarVisible,
+        setIsCalendarVisible,
       }}
     >
       {children}

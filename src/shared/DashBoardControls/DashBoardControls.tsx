@@ -10,7 +10,7 @@ import { UserData } from "../../context/UserDataContext";
 
 const DashBoardControls: FC = () => {
   const navigate = useNavigate();
-  const { setFilterType, setRenderCalendar, renderCalendar } =
+  const { setFilterType, setIsCalendarVisible, isCalendarVisible } =
     useContext(UserData);
 
   const addNewVacation = (): void => {
@@ -38,10 +38,10 @@ const DashBoardControls: FC = () => {
       </Box>
       <Box sx={{ paddingRight: "60px" }}>
         <Button
-          onClick={() => setRenderCalendar((prev) => !prev)}
+          onClick={() => setIsCalendarVisible((prev) => !prev)}
           variant="contained"
         >
-          {renderCalendar ? "Table" : "Calendar"}
+          {isCalendarVisible ? "Table" : "Calendar"}
         </Button>
       </Box>
     </Box>
