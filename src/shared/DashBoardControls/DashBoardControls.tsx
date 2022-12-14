@@ -1,4 +1,4 @@
-import React, { FC, useContext } from "react";
+import React, { Dispatch, FC, SetStateAction, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
@@ -10,7 +10,8 @@ import { UserData } from "../../context/UserDataContext";
 
 const DashBoardControls: FC = () => {
   const navigate = useNavigate();
-  const { setFilterType } = useContext(UserData);
+  const { setFilterType, setIsCalendarVisible, isCalendarVisible } =
+    useContext(UserData);
 
   const addNewVacation = (): void => {
     navigate("/vacation");
@@ -36,7 +37,12 @@ const DashBoardControls: FC = () => {
         </Button>
       </Box>
       <Box sx={{ paddingRight: "60px" }}>
-        <Button variant="outlined">Table</Button>
+        <Button
+          onClick={() => setIsCalendarVisible((prev) => !prev)}
+          variant="contained"
+        >
+          {isCalendarVisible ? "Table" : "Calendar"}
+        </Button>
       </Box>
     </Box>
   );

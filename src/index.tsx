@@ -4,17 +4,26 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import CssBaseline from "@mui/material/CssBaseline";
 import { BrowserRouter as Router } from "react-router-dom";
+import {
+  createTheme,
+  ThemeProvider,
+  styled,
+  useTheme,
+} from "@mui/material/styles";
+const theme = createTheme();
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <Router>
-      <CssBaseline>
-        <App />
-      </CssBaseline>
-    </Router>
+    <ThemeProvider theme={theme}>
+      <Router>
+        <CssBaseline>
+          <App />
+        </CssBaseline>
+      </Router>
+    </ThemeProvider>
   </React.StrictMode>
 );
 
