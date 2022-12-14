@@ -117,7 +117,11 @@ const Calendar = () => {
       <Frame>
         <Header>
           <IconButton
-            onClick={() => setDate(dayjs(new Date(year, month - 1, day)))}
+            onClick={() =>
+              setDate(
+                dayjs(new Date(year, month >= 1 ? month - 1 : month, day))
+              )
+            }
           >
             <ArrowBackIosIcon sx={{ color: "white" }} />
           </IconButton>
@@ -126,7 +130,11 @@ const Calendar = () => {
             {MONTHS[month]} {year}
           </Box>
           <IconButton
-            onClick={() => setDate(dayjs(new Date(year, month + 1, day)))}
+            onClick={() =>
+              setDate(
+                dayjs(new Date(year, month >= 11 ? month : month + 1, day))
+              )
+            }
           >
             <ArrowForwardIosIcon sx={{ color: "white" }} />
           </IconButton>

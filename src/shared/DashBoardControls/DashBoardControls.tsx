@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useContext } from "react";
+import React, { FC, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Box from "@mui/material/Box";
@@ -10,12 +10,17 @@ import { UserData } from "../../context/UserDataContext";
 
 const DashBoardControls: FC = () => {
   const navigate = useNavigate();
-  const { setFilterType, setIsCalendarVisible, isCalendarVisible } =
+  const { setFilterType, setIsCalendarVisible, isCalendarVisible, filterType } =
     useContext(UserData);
 
   const addNewVacation = (): void => {
     navigate("/vacation");
   };
+
+  const actualButtonVariant =
+    filterType === "actual" ? "contained" : "outlined";
+  const historyButtonVariant =
+    filterType === "history" ? "contained" : "outlined";
 
   return (
     <Box sx={styledDashboard.dashboardWrapper}>
@@ -25,8 +30,18 @@ const DashBoardControls: FC = () => {
           variant="contained"
           aria-label="Disabled elevation buttons"
         >
-          <Button onClick={() => setFilterType("actual")}>Actual</Button>
-          <Button onClick={() => setFilterType("history")}>History</Button>
+          <Button
+            variant={actualButtonVariant}
+            onClick={() => setFilterType("actual")}
+          >
+            Actual
+          </Button>
+          <Button
+            variant={historyButtonVariant}
+            onClick={() => setFilterType("history")}
+          >
+            History
+          </Button>
         </ButtonGroup>
         <Button
           onClick={addNewVacation}

@@ -150,6 +150,8 @@ const AddVacation = () => {
             />
             <VacationDatePicker
               type="Start"
+              endDate={endDate}
+              setEndDate={setEndDate}
               startDate={startDate}
               setStartDate={setStartDate}
             />
@@ -157,6 +159,8 @@ const AddVacation = () => {
               type="End"
               endDate={endDate}
               setEndDate={setEndDate}
+              startDate={startDate}
+              setStartDate={setStartDate}
             />
           </Box>
         </Box>

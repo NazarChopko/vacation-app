@@ -1,5 +1,5 @@
 import React, { FC, SetStateAction, Dispatch } from "react";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -7,10 +7,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 interface IVacationDatePickerProps {
   type: string;
-  startDate?: Dayjs | null;
-  endDate?: Dayjs | null;
-  setStartDate?: Dispatch<SetStateAction<Dayjs | null>>;
-  setEndDate?: Dispatch<SetStateAction<Dayjs | null>>;
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
+  setStartDate: Dispatch<SetStateAction<Dayjs | null>>;
+  setEndDate: Dispatch<SetStateAction<Dayjs | null>>;
 }
 
 const VacationDatePicker: FC<IVacationDatePickerProps> = ({
@@ -23,9 +23,9 @@ const VacationDatePicker: FC<IVacationDatePickerProps> = ({
   const handleChangeDate = (date: Dayjs | null) => {
     if (date) {
       if (type === "Start") {
-        setStartDate?.(date);
+        setStartDate(date);
       } else {
-        setEndDate?.(date);
+        setEndDate(date);
       }
     }
   };
@@ -37,10 +37,9 @@ const VacationDatePicker: FC<IVacationDatePickerProps> = ({
         value={type === "Start" ? startDate : endDate}
         onChange={(newDate: Dayjs | null) => handleChangeDate(newDate)}
         renderInput={(params) => <TextField {...params} />}
-        onError={(reason, value) => {
-          console.log(reason);
-          console.log(value);
-        }}
+        disablePast
+        minDate={startDate && type === "End" ? dayjs(startDate) : dayjs()}
+        maxDate={endDate && type === "Start" ? dayjs(endDate) : undefined}
       />
     </LocalizationProvider>
   );

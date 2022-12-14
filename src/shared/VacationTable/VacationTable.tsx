@@ -239,66 +239,80 @@ const VacationTable: FC = () => {
     );
   };
 
-  return filterType && filtered ? (
+  const renderEmptyTable = () => {
+    return (
+      <Box display={"flex"} justifyContent={"center"}>
+        <Typography
+          sx={(theme) => ({
+            border: `1px solid ${theme.palette.primary.main} `,
+            padding: "20px",
+            borderRadius: "6px",
+          })}
+          color={"primary"}
+          variant="h4"
+        >
+          Table is empty!
+        </Typography>
+      </Box>
+    );
+  };
+
+  return filterType ? (
     <>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 900 }} aria-label="custom pagination table">
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ width: "100px" }} align="left">
-                Absect id
-              </TableCell>
-              <TableCell sx={{ width: "150" }} align="center">
-                Type
-              </TableCell>
-              <TableCell align="center">Start date</TableCell>
-              <TableCell align="center">End date</TableCell>
-              <TableCell sx={{ width: "500px" }} align="center">
-                Notes
-              </TableCell>
-              <TableCell align="center">Action</TableCell>
-            </TableRow>
-          </TableHead>
-          {filtered.length === 0 ? (
-            <TableBody>
+      {filtered.length > 0 ? (
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 900 }} aria-label="custom pagination table">
+            <TableHead>
               <TableRow>
-                <TableCell />
-                <TableCell />
-                <TableCell />
-                <TableCell sx={{ fontSize: "20px" }} align="right">
-                  Table is empty!
+                <TableCell sx={{ width: "100px" }} align="left">
+                  Absect id
                 </TableCell>
+                <TableCell sx={{ width: "150" }} align="center">
+                  Type
+                </TableCell>
+                <TableCell align="center">Start date</TableCell>
+                <TableCell align="center">End date</TableCell>
+                <TableCell sx={{ width: "500px" }} align="center">
+                  Notes
+                </TableCell>
+                <TableCell align="center">Action</TableCell>
               </TableRow>
-            </TableBody>
-          ) : (
-            renderTableBody(filtered)
-          )}
-          <TableFooter>
-            <TableRow>
-              {filtered.length < 6 ? null : (
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
-                  colSpan={3}
-                  count={filtered.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  SelectProps={{
-                    inputProps: {
-                      "aria-label": "rows per page",
-                    },
-                    native: true,
-                  }}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              )}
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            {renderTableBody(filtered)}
+            <TableFooter>
+              <TableRow>
+                {filtered.length < 6 ? null : (
+                  <TablePagination
+                    rowsPerPageOptions={[
+                      5,
+                      10,
+                      25,
+                      { label: "All", value: -1 },
+                    ]}
+                    colSpan={3}
+                    count={filtered.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    SelectProps={{
+                      inputProps: {
+                        "aria-label": "rows per page",
+                      },
+                      native: true,
+                    }}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    ActionsComponent={TablePaginationActions}
+                  />
+                )}
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+      ) : (
+        renderEmptyTable()
+      )}
     </>
-  ) : (
+  ) : data.length ? (
     <>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 900 }} aria-label="custom pagination table">
@@ -318,20 +332,7 @@ const VacationTable: FC = () => {
               <TableCell align="center">Action</TableCell>
             </TableRow>
           </TableHead>
-          {data.length === 0 ? (
-            <TableBody>
-              <TableRow>
-                <TableCell />
-                <TableCell />
-                <TableCell />
-                <TableCell sx={{ fontSize: "20px" }} align="right">
-                  Table is empty!
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          ) : (
-            renderTableBody(data)
-          )}
+          {renderTableBody(data)}
           <TableFooter>
             <TableRow>
               {data.length < 6 ? null : (
@@ -357,6 +358,8 @@ const VacationTable: FC = () => {
         </Table>
       </TableContainer>
     </>
+  ) : (
+    renderEmptyTable()
   );
 };
 
