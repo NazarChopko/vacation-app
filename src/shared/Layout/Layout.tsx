@@ -27,7 +27,7 @@ const Layout: FC<ILayoutProps> = ({ title, backButton }) => {
     null
   );
   const { user, logout, loading } = useAuth();
-  const { setData, setFilterType, setIsCalendarVisible } = useContext(UserData);
+  const { setData, setIsCalendarVisible } = useContext(UserData);
   const navigate = useNavigate();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>): void => {
@@ -94,7 +94,6 @@ const Layout: FC<ILayoutProps> = ({ title, backButton }) => {
               <MenuItem
                 onClick={() => {
                   logout();
-                  setFilterType("");
                   setIsCalendarVisible(false);
                   setData([]);
                   navigate("/login");
