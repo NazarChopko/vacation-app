@@ -72,7 +72,6 @@ const AddVacation = () => {
         })
       );
     }
-    setFilterType("");
     setData(newEditVacation);
   };
 
@@ -84,7 +83,6 @@ const AddVacation = () => {
           "data",
           JSON.stringify({ [user?.email as string]: [newVacation] })
         );
-        setFilterType("");
         setData((prev) => [newVacation, ...prev]);
         return navigate("/");
       }
@@ -109,7 +107,6 @@ const AddVacation = () => {
           })
         );
       }
-      setFilterType("");
       setData((prev) => [newVacation, ...prev]);
       navigate("/");
     } else {

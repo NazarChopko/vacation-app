@@ -8,7 +8,6 @@ import React, {
   PropsWithChildren,
   useEffect,
 } from "react";
-import { useAuth } from "../hooks/useAuth";
 
 export interface IDataVacation {
   type: string;
@@ -18,11 +17,13 @@ export interface IDataVacation {
   id: string;
 }
 
+type filterType = "actual" | "history";
+
 interface IContext {
   data: IDataVacation[] | [];
   setData: Dispatch<SetStateAction<IDataVacation[]>>;
-  filterType: string;
-  setFilterType: Dispatch<SetStateAction<string>>;
+  filterType: filterType;
+  setFilterType: Dispatch<SetStateAction<filterType>>;
   isCalendarVisible: boolean;
   setIsCalendarVisible: Dispatch<SetStateAction<boolean>>;
 }
@@ -31,7 +32,7 @@ export const UserData = createContext<IContext>({} as IContext);
 
 const UserDataContext: FC<PropsWithChildren> = ({ children }) => {
   const [data, setData] = useState<IDataVacation[]>([]);
-  const [filterType, setFilterType] = useState<string>("");
+  const [filterType, setFilterType] = useState<filterType>("actual");
   const [isCalendarVisible, setIsCalendarVisible] = useState(false);
 
   return (
